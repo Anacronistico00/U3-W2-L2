@@ -1,30 +1,25 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 
 const URL = 'https://striveschool-api.herokuapp.com/api/comments/';
 
 const token =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzYwMGRkNTBlYTI4NjAwMTUyOGI5NTgiLCJpYXQiOjE3MzY2NzcyMjksImV4cCI6MTczNzg4NjgyOX0.zLzKm3iXeO3hZs1lPOOWUq6Ap9M1YDAS06cSDSgRtm8';
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Nzg2NTk4MzBmZTRlMjAwMTU2Njg3YjgiLCJpYXQiOjE3MzY4NTc5ODgsImV4cCI6MTczODA2NzU4OH0.MGf5QS76_6IP8ViWJmoEUTEWv9nAx1kN1gmvOseZ5uk';
 
 const initialState = {
   comment: '',
   rate: 1,
-  author: '',
 };
 
-class AddComment extends Component {
-  state = {
-    comments: {
-      ...initialState,
-    },
-  };
+const AddComment = (props) => {
+  const [comments, setComments] = useState(initialState);
 
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    this.postComment();
+    postComment();
   };
 
-  postComment = async () => {
+  const postComment = async () => {
     try {
       const response = await fetch(URL, {
         method: 'POST',
@@ -33,8 +28,8 @@ class AddComment extends Component {
           Authorization: token,
         },
         body: JSON.stringify({
-          ...this.state.comments,
-          elementId: this.props.asin,
+          ...comments,
+          elementId: props.asin,
         }),
       });
       if (!response.ok) {
@@ -42,91 +37,61 @@ class AddComment extends Component {
       }
 
       const data = await response.json();
+
       console.log('Commento inviato con successo', data);
-      this.setState({
-        comments: {
-          ...initialState,
-        },
-      });
+      setComments(initialState);
+      props.updateComments();
     } catch (error) {
       console.log(error);
     }
   };
 
-  handleComments = () => {
-    this.props.updateComments();
-  };
+  return (
+    <>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label> Inserisci Commento</Form.Label>
+          <Form.Control
+            as='textarea'
+            rows={4}
+            value={comments.comment}
+            onChange={(e) => {
+              setComments({ ...comments, comment: e.target.value });
+            }}
+            placeholder='Lascia un commento..'
+            required
+          ></Form.Control>
+        </Form.Group>
 
-  render() {
-    return (
-      <>
-        <Form onSubmit={this.handleSubmit}>
-          <Form.Group>
-            <Form.Label> Inserisci Commento</Form.Label>
-            <Form.Control
-              as='textarea'
-              rows={4}
-              value={this.state.comments.comment}
-              onChange={(e) => {
-                this.setState({
-                  comments: {
-                    ...this.state.comments,
-                    comment: e.target.value,
-                  },
-                });
-              }}
-              placeholder='Lascia un commento..'
-              required
-            ></Form.Control>
-          </Form.Group>
-          <Form.Group className='mb-3'>
-            <Form.Label>Il tuo nome</Form.Label>
-            <Form.Control
-              // Collego il valore dell'input allo stato
-              value={this.state.comments.author}
-              onChange={(e) => {
-                // ora devo SETTARE lo stato con il valore inserito nel campo input
-                this.setState({
-                  comments: {
-                    ...this.state.comments,
-                    author: e.target.value,
-                  },
-                });
-              }}
-              type='text'
-              placeholder='Mario Rossi'
-              required
-            />
-          </Form.Group>
-          <Form.Group className='mb-3'>
-            <Form.Label>Valutazione</Form.Label>
-            <Form.Select
-              aria-label='Table size'
-              value={this.state.comments.rate}
-              onChange={(e) => {
-                this.setState({
-                  comments: {
-                    ...this.state.comments,
-                    rate: Number(e.target.value),
-                  },
-                });
-              }}
-            >
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </Form.Select>
-          </Form.Group>
+        <Form.Group className='mb-3'>
+          <Form.Label>Valutazione</Form.Label>
+          <Form.Select
+            aria-label='Table size'
+            value={comments.rate}
+            onChange={(e) => {
+              setComments({ ...comments, rate: e.target.value });
+            }}
+          >
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </Form.Select>
+        </Form.Group>
 
-          <Button variant='success' type='submit' onClick={this.handleComments}>
-            Lascia un commento
-          </Button>
-        </Form>
-      </>
-    );
-  }
-}
+        <Button
+          variant='success'
+          type='submit'
+          onClick={() => {
+            postComment;
+          }}
+        >
+          Lascia un commento
+        </Button>
+      </Form>
+    </>
+  );
+};
 
 export default AddComment;

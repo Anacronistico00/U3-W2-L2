@@ -1,73 +1,67 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import SingleBook from './SingleBook';
-import { Component } from 'react';
+import { useState } from 'react';
 import CommentArea from './CommentArea';
 
-class BookList extends Component {
-  state = {
-    search: '',
-    selectedBook: null,
+const BookList = (props) => {
+  const [search, setSearch] = useState('');
+  const [selectedBook, setSelectedBook] = useState(null);
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
   };
 
-  handleSearch = (e) => {
-    this.setState({
-      search: e.target.value,
-    });
+  const handleBookSelect = (asin) => {
+    setSelectedBook(asin === selectedBook ? null : asin);
   };
 
-  handleBookSelect = (asin) => {
-    this.setState({
-      selectedBook: asin === this.state.selectedBook ? null : asin,
-    });
-  };
+  const filteredBooks = props.books.filter((book) =>
+    book.title.toLowerCase().includes(search.toLowerCase())
+  );
 
-  render() {
-    const filteredBooks = this.props.books.filter((book) =>
-      book.title.toLowerCase().includes(this.state.search.toLowerCase())
-    );
-
-    return (
+  return (
+    <div>
       <div>
-        <div>
-          <h1 className='text-center my-3 fw-bolder'>Welcome to My Library!</h1>
-        </div>
-        <div style={{ margin: '1rem', textAlign: 'center' }}>
-          <input
-            type='text'
-            placeholder='Search for a Book...'
-            value={this.state.search}
-            onChange={this.handleSearch}
-            style={{ padding: '0.5rem', width: '50%', fontSize: '1rem' }}
-          />
-        </div>
-        <Container fluid>
-          <Row>
-            <Col xs={7}>
-              <div className='d-flex flex-wrap justify-content-center'>
-                {filteredBooks.map((book, i) => (
-                  <SingleBook
-                    key={i}
-                    book={book}
-                    handleBookSelect={this.handleBookSelect}
-                    asin={this.state.selectedBook}
-                  />
-                ))}
-              </div>
-            </Col>
-            <Col xs={5}>
-              {this.state.selectedBook ? (
-                <CommentArea asin={this.state.selectedBook} />
+        <h1 className='text-center my-3 fw-bolder'>Welcome to My Library!</h1>
+      </div>
+      <div style={{ margin: '1rem', textAlign: 'center' }}>
+        <input
+          type='text'
+          placeholder='Search for a Book...'
+          value={search}
+          onChange={handleSearch}
+          style={{ padding: '0.5rem', width: '50%', fontSize: '1rem' }}
+        />
+      </div>
+      <Container fluid>
+        <Row>
+          <Col xs={7}>
+            <div className='d-flex flex-wrap justify-content-center'>
+              {filteredBooks.map((book, i) => (
+                <SingleBook
+                  key={i}
+                  book={book}
+                  handleBookSelect={handleBookSelect}
+                  asin={selectedBook}
+                />
+              ))}
+            </div>
+          </Col>
+          <Col xs={5} className='h-100 position-sticky top-0 mt-5 pt-5'>
+            <Container>
+              {selectedBook ? (
+                <CommentArea asin={selectedBook} />
               ) : (
                 <p className='text-center mt-5 pt-5'>
                   Seleziona un libro per vedere i commenti.
                 </p>
               )}
-            </Col>
-          </Row>
-        </Container>
-      </div>
-    );
-  }
-}
+            </Container>
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
+};
 
 export default BookList;

@@ -1,6 +1,6 @@
 import { Container, Row, Col } from 'react-bootstrap';
 
-const MyFooter = function () {
+const MyFooter = () => {
   return (
     <footer>
       <Container fluid={true} className='bg-dark pb-4'>

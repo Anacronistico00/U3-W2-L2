@@ -1,7 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { useState } from 'react';
 
-function Welcome() {
+const Welcome = () => {
   const [show, setShow] = useState(true);
 
   const handleClose = () => setShow(false);
@@ -30,6 +30,6 @@ function Welcome() {
       </Modal>
     </>
   );
-}
+};
 
 export default Welcome;

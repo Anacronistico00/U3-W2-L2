@@ -1,6 +1,6 @@
 import { Container, Navbar, Nav } from 'react-bootstrap';
 
-const MyNav = function () {
+const MyNav = () => {
   return (
     <Navbar collapseOnSelect expand='md' bg='dark' data-bs-theme='dark'>
       <Container fluid={true}>
