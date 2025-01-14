@@ -80,13 +80,7 @@ const AddComment = (props) => {
           </Form.Select>
         </Form.Group>
 
-        <Button
-          variant='success'
-          type='submit'
-          onClick={() => {
-            postComment;
-          }}
-        >
+        <Button variant='success' type='submit'>
           Lascia un commento
         </Button>
       </Form>
